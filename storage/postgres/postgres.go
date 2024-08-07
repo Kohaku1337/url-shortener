@@ -20,19 +20,19 @@ func New(connStr string) (*Storage, error) {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	stmt, err := db.Prepare(`
+	_, err = db.Exec(`
 	CREATE TABLE IF NOT EXISTS url(
 		id SERIAL PRIMARY KEY,
 		alias TEXT NOT NULL UNIQUE,
-		url TEXT NOT NULL);
-	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
+		url TEXT NOT NULL)
 	`)
-
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	_, err = stmt.Exec()
+	_, err = db.Exec(`
+	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias)
+	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
